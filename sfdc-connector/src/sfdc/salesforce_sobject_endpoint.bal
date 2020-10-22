@@ -22,7 +22,7 @@ import ballerina/oauth2;
 # The Salesforce SObject Client object.
 # + salesforceClient - OAuth2 client endpoint
 # + salesforceConfiguration - Salesforce Connector configuration
-public type SObjectClient client object {
+public client class SObjectClient {
     http:Client salesforceClient;
     SalesforceConfiguration salesforceConfiguration;
 
@@ -366,4 +366,4 @@ public type SObjectClient client object {
         appended = appended.substring(0, appended.length() - 1);
         return appended;
     }
-};
+}

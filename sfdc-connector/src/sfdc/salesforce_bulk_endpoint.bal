@@ -23,7 +23,7 @@ import ballerina/io;
 # The Salesforce Bulk Client object.
 # + httpClient - OAuth2 client endpoint
 # + salesforceConfiguration - Salesforce Connector configuration
-public type BulkClient client object {
+public client class BulkClient {
     http:Client httpClient;
     SalesforceConfiguration salesforceConfiguration;
 
@@ -158,11 +158,11 @@ public type BulkClient client object {
             return jobResponse;
         }
     }
-};
+}
 
 
 # The Job object.
-public type BulkJob client object {
+public client class BulkJob {
     string jobId;
     JOBTYPE jobDataType;
     OPERATION operation;
@@ -182,80 +182,78 @@ public type BulkJob client object {
     public remote function addBatch(json|string|xml|io:ReadableByteChannel content) returns @tainted error|BatchInfo{
         string path = prepareUrl([SERVICES, ASYNC, BULK_API_VERSION, JOB, self.jobId, BATCH]);
         http:Request req = new;
-        match self.jobDataType {
-            JSON => {
-                if (content is json) {
-                    req.setJsonPayload(content);
-                }
-                if (content is string) {
-                    req.setTextPayload(content);
-                }                
-                if (content is io:ReadableByteChannel) {
-                    if (QUERY == self.operation) {
-                        string payload = check convertToString(content);
-                        req.setTextPayload(<@untainted>  payload);
-                    } else {
-                        json payload = check convertToJson(content);
-                        req.setJsonPayload(<@untainted>  payload);
-                    }
-                }
-                req.setHeader(CONTENT_TYPE, APP_JSON);
-                var response = self.httpClient->post(path, req);
-                json|Error batchResponse = checkJsonPayloadAndSetErrors(response);
-                if (batchResponse is json){
-                    BatchInfo binfo = check batchResponse.cloneWithType(BatchInfo);
-                    return binfo;
-                } else {
-                    return batchResponse;
-                } 
+        if(self.jobDataType == JSON) {
+            if (content is json) {
+                req.setJsonPayload(content);
             }
-            XML => {
-                if (content is xml) {
-                    req.setXmlPayload(content);
-                }
-                if (content is string) {
-                    req.setTextPayload(content);
-                }
-                if (content is io:ReadableByteChannel) {
-                    if (QUERY == self.operation) {
-                        string payload = check convertToString(content);
-                        req.setTextPayload(<@untainted>  payload);
-                    } else {
-                        xml payload = check convertToXml(content);
-                        req.setXmlPayload(<@untainted>  payload);
-                    }
-                } 
-                req.setHeader(CONTENT_TYPE, APP_XML);
-                var response = self.httpClient->post(path, req);
-                xml|Error batchResponse = checkXmlPayloadAndSetErrors(response);
-                if (batchResponse is xml){
-                    BatchInfo binfo = check createBatchRecordFromXml(batchResponse);
-                    return binfo;
+            if (content is string) {
+                req.setTextPayload(content);
+            }                
+            if (content is io:ReadableByteChannel) {
+                if (QUERY == self.operation) {
+                    string payload = check convertToString(content);
+                    req.setTextPayload(<@untainted>  payload);
                 } else {
-                    return batchResponse;
+                    json payload = check convertToJson(content);
+                    req.setJsonPayload(<@untainted>  payload);
                 }
             }
-            CSV => {
-                if (content is string) {
-                    req.setTextPayload(content);
-                }                
-                if (content is io:ReadableByteChannel) {
-                    string textcontent = check convertToString(content);
-                    req.setTextPayload(<@untainted> textcontent);
-                }
-                req.setHeader(CONTENT_TYPE, TEXT_CSV);
-                var response = self.httpClient->post(path, req);
-                xml|Error batchResponse = checkXmlPayloadAndSetErrors(response);
-                if (batchResponse is xml){
-                    BatchInfo binfo = check createBatchRecordFromXml(batchResponse);
-                    return binfo;
-                } else {
-                    return batchResponse;
-                }
+            req.setHeader(CONTENT_TYPE, APP_JSON);
+            var response = self.httpClient->post(path, req);
+            json|Error batchResponse = checkJsonPayloadAndSetErrors(response);
+            if (batchResponse is json){
+                BatchInfo binfo = check batchResponse.cloneWithType(BatchInfo);
+                return binfo;
+            } else {
+                return batchResponse;
+            } 
+        }
+        else if(self.jobDataType == XML){
+            if (content is xml) {
+                req.setXmlPayload(content);
             }
-            _ => {
+            if (content is string) {
+                req.setTextPayload(content);
+            }
+            if (content is io:ReadableByteChannel) {
+                if (QUERY == self.operation) {
+                    string payload = check convertToString(content);
+                    req.setTextPayload(<@untainted>  payload);
+                } else {
+                    xml payload = check convertToXml(content);
+                    req.setXmlPayload(<@untainted>  payload);
+                }
+            } 
+            req.setHeader(CONTENT_TYPE, APP_XML);
+            var response = self.httpClient->post(path, req);
+            xml|Error batchResponse = checkXmlPayloadAndSetErrors(response);
+            if (batchResponse is xml){
+                BatchInfo binfo = check createBatchRecordFromXml(batchResponse);
+                return binfo;
+            } else {
+                return batchResponse;
+            }
+        }
+        else if (self.jobDataType == CSV) {
+            if (content is string) {
+                req.setTextPayload(content);
+            }                
+            if (content is io:ReadableByteChannel) {
+                string textcontent = check convertToString(content);
+                req.setTextPayload(<@untainted> textcontent);
+            }
+            req.setHeader(CONTENT_TYPE, TEXT_CSV);
+            var response = self.httpClient->post(path, req);
+            xml|Error batchResponse = checkXmlPayloadAndSetErrors(response);
+            if (batchResponse is xml){
+                BatchInfo binfo = check createBatchRecordFromXml(batchResponse);
+                return binfo;
+            } else {
+                return batchResponse;
+            }
+        }
+        else {
                 return error("Invalid Job Type!");
-            }
         }
     }
 
@@ -380,4 +378,4 @@ public type BulkJob client object {
             }
         }
     }
-};
+}

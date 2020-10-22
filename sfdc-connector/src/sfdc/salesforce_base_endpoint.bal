@@ -22,7 +22,7 @@ import ballerina/oauth2;
 # The Salesforce Client object.
 # + salesforceClient - OAuth2 client endpoint
 # + salesforceConfiguration - Salesforce Connector configuration
-public type BaseClient client object {
+public client class BaseClient {
     http:Client salesforceClient;
     SalesforceConfiguration salesforceConfiguration;
 
@@ -107,7 +107,7 @@ public type BaseClient client object {
         http:Response|error response = self.salesforceClient->get(path);
         return checkAndSetErrors(response);
     }
-};
+}
 
 # Salesforce client configuration.
 # + baseUrl - The Salesforce endpoint URL

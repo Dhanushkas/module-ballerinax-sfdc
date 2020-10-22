@@ -33,7 +33,7 @@ The module includes a Listener that would capture events on PushTopics defined i
 ## Compatibility
 |                     |    Version         |
 |:-------------------:|:------------------:|
-| Ballerina Language  | swan-lake-preview2 |
+| Ballerina Language  | swan-lake-preview4 |
 | Salesforce API      | v48.0              |
 
 ## Sample

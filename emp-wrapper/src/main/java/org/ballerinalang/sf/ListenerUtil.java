@@ -19,10 +19,11 @@
 
 package org.ballerinalang.sf;
 
-import org.ballerinalang.jvm.BallerinaErrors;
+import org.ballerinalang.jvm.api.BErrorCreator;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BError;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.scheduling.StrandMetadata;
-import org.ballerinalang.jvm.values.ErrorValue;
-import org.ballerinalang.jvm.values.api.BString;
 import org.cometd.bayeux.Channel;
 import org.eclipse.jetty.util.ajax.JSON;
 
@@ -31,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import org.ballerinalang.jvm.BRuntime;
+import org.ballerinalang.jvm.api.BRuntime;
 import org.ballerinalang.jvm.values.MapValue;
 import org.ballerinalang.jvm.values.ObjectValue;
 
@@ -130,7 +131,7 @@ public class ListenerUtil {
         return topicConfig.getIntValue(Constants.REPLAY_FROM);
     }
 
-    private static ErrorValue sfdcError(String errorMessage) {
-        return BallerinaErrors.createDistinctError(Constants.SFDC_ERROR, Constants.PACKAGE_ID_SFDC, errorMessage);
+    private static BError sfdcError(String errorMessage) {
+        return BErrorCreator.createDistinctError(Constants.SFDC_ERROR, Constants.PACKAGE_ID_SFDC, BStringUtils.fromString(errorMessage));
     }
 }

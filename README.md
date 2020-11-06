@@ -236,8 +236,8 @@ The Listener is configured as below.
 
 ```ballerina
     sfdc:ListenerConfiguration listenerConfig = {
-        username: config:getAsString("USERNAME"),
-        password: config:getAsString("PASSWORD")
+        username: config:getAsString("SF_USERNAME"),
+        password: config:getAsString("SF_PASSWORD")
     };
 
     listener sfdc:Listener eventListener = new (listenerConfig);

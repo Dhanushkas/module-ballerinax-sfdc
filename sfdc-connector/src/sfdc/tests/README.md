@@ -62,8 +62,8 @@ insert pushTopic;
    CLIENT_SECRET="<CLIENT_SECRET>"
    REFRESH_TOKEN="<REFRESH_TOKEN>"
    REFRESH_URL="<REFRESH_URL>"
-   USERNAME="<USERNAME>"
-   PASSWORD="<PASSWORD>"
+   SF_USERNAME="<USERNAME>"
+   SF_PASSWORD="<PASSWORD>"
    ```
 2. Run the following command inside repo root folder.
    ```bash

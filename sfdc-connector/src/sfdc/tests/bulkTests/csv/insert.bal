@@ -20,8 +20,7 @@ import ballerina/test;
 
 @test:Config {}
 function insertCsv() {
-    BulkClient bulkClient = baseClient->getBulkClient();
-    log:printInfo("bulkClient -> insertCsv");
+    log:printInfo("baseClient -> insertCsv");
     string batchId = "";
 
     string contacts = "description,FirstName,LastName,Title,Phone,Email,My_External_Id__c\n" +
@@ -29,11 +28,11 @@ function insertCsv() {
         "Created_from_Ballerina_Sf_Bulk_API,Peter,Shane,Professor Grade 04,0332211777,peter77@gmail.com,302";
 
     //create job
-    error|BulkJob insertJob = bulkClient->creatJob("insert", "Contact", "CSV");
+    error|BulkJob insertJob = baseClient->creatJob("insert", "Contact", "CSV");
 
     if (insertJob is BulkJob) {
         //add csv content
-        error|BatchInfo batch = insertJob->addBatch(contacts);
+        error|BatchInfo batch = insertJob.addBatch(contacts);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not upload the contacts using CSV.");
             batchId = batch.id;
@@ -42,7 +41,7 @@ function insertCsv() {
         }
 
         //get job info
-        error|JobInfo jobInfo = bulkClient->getJobInfo(insertJob);
+        error|JobInfo jobInfo = baseClient->getJobInfo(insertJob);
         if (jobInfo is JobInfo) {
             test:assertTrue(jobInfo.id.length() > 0, msg = "Getting job info failed.");
         } else {
@@ -50,7 +49,7 @@ function insertCsv() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = insertJob->getBatchInfo(batchId);
+        error|BatchInfo batchInfo = insertJob.getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -58,7 +57,7 @@ function insertCsv() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = insertJob->getAllBatches();
+        error|BatchInfo[] batchInfoList = insertJob.getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -66,7 +65,7 @@ function insertCsv() {
         }
 
         //get batch request
-        var batchRequest = insertJob->getBatchRequest(batchId);
+        var batchRequest = insertJob.getBatchRequest(batchId);
         if (batchRequest is string) {
             test:assertTrue(checkCsvResult(batchRequest) == 2, msg = "Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -75,7 +74,7 @@ function insertCsv() {
             test:assertFail(msg = "Invalid Batch Request!");
         }
 
-        var batchResult = insertJob->getBatchResult(batchId);
+        var batchResult = insertJob.getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Insert was not successful.");
@@ -86,7 +85,7 @@ function insertCsv() {
         }
 
         //close job
-        error|JobInfo closedJob = bulkClient->closeJob(insertJob);
+        error|JobInfo closedJob = baseClient->closeJob(insertJob);
         if (closedJob is JobInfo) {
             test:assertTrue(closedJob.state == "Closed", msg = "Closing job failed.");
         } else {
@@ -100,20 +99,19 @@ function insertCsv() {
 
 @test:Config {}
 function insertCsvFromFile() {
-    BulkClient bulkClient = baseClient->getBulkClient();
-    log:printInfo("bulkClient -> insertCsvFromFile");
+    log:printInfo("baseClient -> insertCsvFromFile");
     string batchId = "";
 
     string csvContactsFilePath = "sfdc-connector/src/sfdc/tests/resources/contacts.csv";
 
     //create job
-    error|BulkJob insertJob = bulkClient->creatJob("insert", "Contact", "CSV");
+    error|BulkJob insertJob = baseClient->creatJob("insert", "Contact", "CSV");
 
     if (insertJob is BulkJob) {
         //add csv content via file
         io:ReadableByteChannel|io:Error rbc = io:openReadableFile(csvContactsFilePath);
         if (rbc is io:ReadableByteChannel) {
-            error|BatchInfo batchUsingXmlFile = insertJob->addBatch(<@untainted>rbc);
+            error|BatchInfo batchUsingXmlFile = insertJob.addBatch(<@untainted>rbc);
             if (batchUsingXmlFile is BatchInfo) {
                 test:assertTrue(batchUsingXmlFile.id.length() > 0, msg = "Could not upload the contacts using CSV file.");
                 batchId = batchUsingXmlFile.id;
@@ -127,7 +125,7 @@ function insertCsvFromFile() {
         }
 
         //get job info
-        error|JobInfo jobInfo = bulkClient->getJobInfo(insertJob);
+        error|JobInfo jobInfo = baseClient->getJobInfo(insertJob);
         if (jobInfo is JobInfo) {
             test:assertTrue(jobInfo.id.length() > 0, msg = "Getting job info failed.");
         } else {
@@ -135,7 +133,7 @@ function insertCsvFromFile() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = insertJob->getBatchInfo(batchId);
+        error|BatchInfo batchInfo = insertJob.getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -143,7 +141,7 @@ function insertCsvFromFile() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = insertJob->getAllBatches();
+        error|BatchInfo[] batchInfoList = insertJob.getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -151,7 +149,7 @@ function insertCsvFromFile() {
         }
 
         //get batch request
-        var batchRequest = insertJob->getBatchRequest(batchId);
+        var batchRequest = insertJob.getBatchRequest(batchId);
         if (batchRequest is string) {
             test:assertTrue(checkCsvResult(batchRequest) == 2, msg = "Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -160,7 +158,7 @@ function insertCsvFromFile() {
             test:assertFail(msg = "Invalid Batch Request!");
         }
 
-        var batchResult = insertJob->getBatchResult(batchId);
+        var batchResult = insertJob.getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Insert was not successful.");
@@ -171,7 +169,7 @@ function insertCsvFromFile() {
         }
 
         //close job
-        error|JobInfo closedJob = bulkClient->closeJob(insertJob);
+        error|JobInfo closedJob = baseClient->closeJob(insertJob);
         if (closedJob is JobInfo) {
             test:assertTrue(closedJob.state == "Closed", msg = "Closing job failed.");
         } else {

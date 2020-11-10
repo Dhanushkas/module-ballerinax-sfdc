@@ -21,18 +21,17 @@ import ballerina/test;
     dependsOn: ["queryJson"]
 }
 function deleteJson() {
-    BulkClient bulkClient = baseClient->getBulkClient();
-    log:printInfo("bulkClient -> deleteJson");
+    log:printInfo("baseClient -> deleteJson");
     string batchId = "";
 
     json contacts = getJsonContactsToDelete(jsonQueryResult);
 
     //create job
-    error|BulkJob deleteJob = bulkClient->creatJob("delete", "Contact", "JSON");
+    error|BulkJob deleteJob = baseClient->creatJob("delete", "Contact", "JSON");
 
     if (deleteJob is BulkJob) {
         //add json content
-        error|BatchInfo batch = deleteJob->addBatch(contacts);
+        error|BatchInfo batch = deleteJob.addBatch(contacts);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not upload the contacts to delete using json.");
             batchId = batch.id;
@@ -41,7 +40,7 @@ function deleteJson() {
         }
 
         //get job info
-        error|JobInfo jobInfo = bulkClient->getJobInfo(deleteJob);
+        error|JobInfo jobInfo = baseClient->getJobInfo(deleteJob);
         if (jobInfo is JobInfo) {
             test:assertTrue(jobInfo.id.length() > 0, msg = "Getting job info failed.");
         } else {
@@ -49,7 +48,7 @@ function deleteJson() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = deleteJob->getBatchInfo(batchId);
+        error|BatchInfo batchInfo = deleteJob.getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -57,7 +56,7 @@ function deleteJson() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = deleteJob->getAllBatches();
+        error|BatchInfo[] batchInfoList = deleteJob.getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -65,7 +64,7 @@ function deleteJson() {
         }
 
         //get batch request
-        var batchRequest = deleteJob->getBatchRequest(batchId);
+        var batchRequest = deleteJob.getBatchRequest(batchId);
         if (batchRequest is json) {
             json[]|error batchRequestArr = <json[]>batchRequest;
             if (batchRequestArr is json[]) {
@@ -80,7 +79,7 @@ function deleteJson() {
         }
 
         //get batch result
-        var batchResult = deleteJob->getBatchResult(batchId);
+        var batchResult = deleteJob.getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Delete was not successful.");
@@ -91,7 +90,7 @@ function deleteJson() {
         }
 
         //close job
-        error|JobInfo closedJob = bulkClient->closeJob(deleteJob);
+        error|JobInfo closedJob = baseClient->closeJob(deleteJob);
         if (closedJob is JobInfo) {
             test:assertTrue(closedJob.state == "Closed", msg = "Closing job failed.");
         } else {

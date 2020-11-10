@@ -21,18 +21,17 @@ import ballerina/test;
     dependsOn: ["updateXml", "insertXmlFromFile"]
 }
 function queryXml() {
-    BulkClient bulkClient = baseClient->getBulkClient();
-    log:printInfo("bulkClient -> queryXml");
+    log:printInfo("baseClient -> queryXml");
     string batchId = "";
 
     string queryStr = "SELECT Id, Name FROM Contact WHERE Title='Professor Grade 05'";
 
     //create job
-    error|BulkJob queryJob = bulkClient->creatJob("query", "Contact", "XML");
+    error|BulkJob queryJob = baseClient->creatJob("query", "Contact", "XML");
 
         if (queryJob is BulkJob) {
         //add xml content
-        error|BatchInfo batch = queryJob->addBatch(queryStr);
+        error|BatchInfo batch = queryJob.addBatch(queryStr);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not upload batch.");
             batchId = batch.id;
@@ -41,7 +40,7 @@ function queryXml() {
         }
 
         //get job info
-        error|JobInfo jobInfo = bulkClient->getJobInfo(queryJob);
+        error|JobInfo jobInfo = baseClient->getJobInfo(queryJob);
         if (jobInfo is JobInfo) {
             test:assertTrue(jobInfo.id.length() > 0, msg = "Getting job info failed.");
         } else {
@@ -49,7 +48,7 @@ function queryXml() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = queryJob->getBatchInfo(batchId);
+        error|BatchInfo batchInfo = queryJob.getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -57,7 +56,7 @@ function queryXml() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = queryJob->getAllBatches();
+        error|BatchInfo[] batchInfoList = queryJob.getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -65,7 +64,7 @@ function queryXml() {
         }
 
         //get batch request
-        var batchRequest = queryJob->getBatchRequest(batchId);
+        var batchRequest = queryJob.getBatchRequest(batchId);
         if (batchRequest is string) {
             test:assertTrue(batchRequest.startsWith("SELECT"), msg = "Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -75,7 +74,7 @@ function queryXml() {
         }
 
         //get batch result
-        var batchResult = queryJob->getBatchResult(batchId);
+        var batchResult = queryJob.getBatchResult(batchId);
             if (batchResult is xml) {
             test:assertTrue ((batchResult/<*>).length() == 5, msg ="Retrieving batch result failed.");
             xmlQueryResult = <@untainted>batchResult;
@@ -86,7 +85,7 @@ function queryXml() {
         }
 
         //close job
-        error|JobInfo closedJob = bulkClient->closeJob(queryJob);
+        error|JobInfo closedJob = baseClient->closeJob(queryJob);
         if (closedJob is JobInfo) {
             test:assertTrue(closedJob.state == "Closed", msg = "Closing job failed.");
         } else {

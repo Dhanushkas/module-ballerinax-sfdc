@@ -183,27 +183,27 @@ Using the created job object, we can add batch to it, get information about the 
     ];
 
     //Add json content.
-    error|sfdc:BatchInfo batch = insertJob.addBatch(contacts); 
+    error|sfdc:BatchInfo batch = insertJob->addBatch(contacts); 
 ```   
 
 ```ballerina
     //Get batch info.
-    error|sfdc:BatchInfo batchInfo = insertJob.getBatchInfo(batch.id
+    error|sfdc:BatchInfo batchInfo = insertJob->getBatchInfo(batch.id
 ``` 
 
 ```ballerina
     //Get all batches.
-    error|sfdc:BatchInfo[] batchInfoList = insertJob.getAllBatches();
+    error|sfdc:BatchInfo[] batchInfoList = insertJob->getAllBatches();
 ```
 
 ```ballerina
     //Get the batch request.
-    var batchRequest = insertJob.getBatchRequest(batchId);
+    var batchRequest = insertJob->getBatchRequest(batchId);
 ```
 
 ```ballerina
     //Get the batch result.
-    error|sdfc:Result[] batchResult = insertJob.getBatchResult(batchId);
+    error|sdfc:Result[] batchResult = insertJob->getBatchResult(batchId);
 ```
 
 The `getJobInfo` remote function retrieves all details of an existing job.

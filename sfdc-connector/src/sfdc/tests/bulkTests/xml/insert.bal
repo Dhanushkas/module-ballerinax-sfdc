@@ -49,7 +49,7 @@ function insertXml() {
 
         if (insertJob is BulkJob) {
         //add xml content
-        error|BatchInfo batch = insertJob.addBatch(contacts);
+        error|BatchInfo batch = insertJob->addBatch(contacts);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not upload the contacts using xml.");
             batchId = batch.id;
@@ -66,7 +66,7 @@ function insertXml() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = insertJob.getBatchInfo(batchId);
+        error|BatchInfo batchInfo = insertJob->getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -74,7 +74,7 @@ function insertXml() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = insertJob.getAllBatches();
+        error|BatchInfo[] batchInfoList = insertJob->getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -82,7 +82,7 @@ function insertXml() {
         }
 
         //get batch request
-        var batchRequest = insertJob.getBatchRequest(batchId);
+        var batchRequest = insertJob->getBatchRequest(batchId);
             if (batchRequest is xml) {
             test:assertTrue ((batchRequest/<*>).length() == 2, msg ="Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -92,7 +92,7 @@ function insertXml() {
         }
 
         //get batch result
-        var batchResult = insertJob.getBatchResult(batchId);
+        var batchResult = insertJob->getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Insert was not successful.");
@@ -129,7 +129,7 @@ function insertXmlFromFile() {
         //add xml content via file
         io:ReadableByteChannel|io:Error rbc = io:openReadableFile(xmlContactsFilePath);
         if (rbc is io:ReadableByteChannel) {
-            error|BatchInfo batchUsingXmlFile = insertJob.addBatch(<@untainted>rbc);
+            error|BatchInfo batchUsingXmlFile = insertJob->addBatch(<@untainted>rbc);
             if (batchUsingXmlFile is BatchInfo) {
                 test:assertTrue(batchUsingXmlFile.id.length() > 0, msg = "Could not upload the contacts using xml file.");
                 batchId = batchUsingXmlFile.id;
@@ -151,7 +151,7 @@ function insertXmlFromFile() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = insertJob.getBatchInfo(batchId);
+        error|BatchInfo batchInfo = insertJob->getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -159,7 +159,7 @@ function insertXmlFromFile() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = insertJob.getAllBatches();
+        error|BatchInfo[] batchInfoList = insertJob->getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -167,7 +167,7 @@ function insertXmlFromFile() {
         }
 
         //get batch request
-        var batchRequest = insertJob.getBatchRequest(batchId);
+        var batchRequest = insertJob->getBatchRequest(batchId);
             if (batchRequest is xml) {
             test:assertTrue ((batchRequest/<*>).length() == 2, msg ="Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -177,7 +177,7 @@ function insertXmlFromFile() {
         }
 
         //get batch result
-        var batchResult = insertJob.getBatchResult(batchId);
+        var batchResult = insertJob->getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Insert was not successful.");

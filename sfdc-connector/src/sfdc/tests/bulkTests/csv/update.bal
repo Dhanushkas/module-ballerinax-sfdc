@@ -36,7 +36,7 @@ function updateCsv() {
 
     if (updateJob is BulkJob) {
         //add csv content
-        error|BatchInfo batch = updateJob.addBatch(<@untainted>contacts);
+        error|BatchInfo batch = updateJob->addBatch(<@untainted>contacts);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not upload the contacts using CSV.");
             batchId = batch.id;
@@ -53,7 +53,7 @@ function updateCsv() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = updateJob.getBatchInfo(batchId);
+        error|BatchInfo batchInfo = updateJob->getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -61,7 +61,7 @@ function updateCsv() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = updateJob.getAllBatches();
+        error|BatchInfo[] batchInfoList = updateJob->getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -69,7 +69,7 @@ function updateCsv() {
         }
 
         //get batch request
-        var batchRequest = updateJob.getBatchRequest(batchId);
+        var batchRequest = updateJob->getBatchRequest(batchId);
         if (batchRequest is string) {
             test:assertTrue(checkCsvResult(batchRequest) == 2, msg = "Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -78,7 +78,7 @@ function updateCsv() {
             test:assertFail(msg = "Invalid Batch Request!");
         }
 
-        var batchResult = updateJob.getBatchResult(batchId);
+        var batchResult = updateJob->getBatchResult(batchId);
         if (batchResult is Result[]) {
             test:assertTrue(batchResult.length() > 0, msg = "Retrieving batch result failed.");
             test:assertTrue(checkBatchResults(batchResult), msg = "Update was not successful.");

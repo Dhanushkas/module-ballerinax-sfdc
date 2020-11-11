@@ -31,7 +31,7 @@ function queryCsv() {
 
     if (queryJob is BulkJob) {
         //add query string
-        error|BatchInfo batch = queryJob.addBatch(queryStr);
+        error|BatchInfo batch = queryJob->addBatch(queryStr);
         if (batch is BatchInfo) {
             test:assertTrue(batch.id.length() > 0, msg = "Could not add batch.");
             batchId = batch.id;
@@ -48,7 +48,7 @@ function queryCsv() {
         }
 
         //get batch info
-        error|BatchInfo batchInfo = queryJob.getBatchInfo(batchId);
+        error|BatchInfo batchInfo = queryJob->getBatchInfo(batchId);
         if (batchInfo is BatchInfo) {
             test:assertTrue(batchInfo.id == batchId, msg = "Getting batch info failed.");
         } else {
@@ -56,7 +56,7 @@ function queryCsv() {
         }
 
         //get all batches
-        error|BatchInfo[] batchInfoList = queryJob.getAllBatches();
+        error|BatchInfo[] batchInfoList = queryJob->getAllBatches();
         if (batchInfoList is BatchInfo[]) {
             test:assertTrue(batchInfoList.length() == 1, msg = "Getting all batches info failed.");
         } else {
@@ -64,7 +64,7 @@ function queryCsv() {
         }
 
         //get batch request
-        var batchRequest = queryJob.getBatchRequest(batchId);
+        var batchRequest = queryJob->getBatchRequest(batchId);
         if (batchRequest is string) {
             test:assertTrue(batchRequest.startsWith("SELECT"), msg = "Retrieving batch request failed.");
         } else if (batchRequest is error) {
@@ -74,7 +74,7 @@ function queryCsv() {
         }
 
         //get batch result
-        var batchResult = queryJob.getBatchResult(batchId);
+        var batchResult = queryJob->getBatchResult(batchId);
         if (batchResult is string) {
             test:assertTrue(checkCsvResult(batchResult) == 5, msg = "Retrieving batch result failed.");
             csvQueryResult = <@untainted>batchResult;

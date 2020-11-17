@@ -7,7 +7,7 @@ keywords = ["ballerina", "salesforce", "sfdc", "client", "connector"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-sfdc"
 
 [dependencies]
-"ballerina/encoding" = 1.0.3
+"ballerina/encoding" = "1.0.3"
 
 [platform]
 target = "java11"

@@ -13,13 +13,9 @@ jobs:
             uses: actions/setup-java@v1 
             with:
               java-version: 11
-              java-package: jdk      
           - run: mvn clean package -pl emp-wrapper
-          - run: echo $JAVA_HOME
           - name: Ballerina Build
             uses: ballerina-platform/ballerina-action/@swan-lake-connector-release
-            env: 
-                JAVA_HOME: $JAVA_HOME
             with:
               args:
                 build -a -c --skip-tests --sourceroot sfdc-connector

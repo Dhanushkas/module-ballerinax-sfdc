@@ -13,6 +13,7 @@ jobs:
             uses: actions/setup-java@v1
             with:
               java-version: '11'
+          - run: echo $JAVA_HOME
           - run: mvn clean package -pl emp-wrapper
           - name: Ballerina Build
             uses: ballerina-platform/ballerina-action/@swan-lake-connector-release
